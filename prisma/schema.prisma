@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Example {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String?        @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  city          String?
+  spots         Spot[]
+  followedBy    Follow[]       @relation("following")
+  following     Follow[]       @relation("follower")
+  comments      Comment[]
+  spotLikes     SpotLikes[]
+  commentLikes  CommentLikes[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Spot {
+  id          String   @id @default(cuid())
+  name        String
+  location    String
+  description String
+  images      String[]
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  categories Category[]
+  comments   Comment[]
+  likes      SpotLikes[]
+}
+
+enum Category {
+  CITY
+  COUNTRY
+}
+
+model SpotLikes {
+  id     String  @id @default(cuid())
+  Spot   Spot?   @relation(fields: [spotId], references: [id])
+  spotId String?
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+}
+
+model Follow {
+  follower    User     @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User     @relation("following", fields: [followingId], references: [id])
+  followingId String
+  createdAt   DateTime @default(now())
+
+  @@id([followerId, followingId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  text      String
+
+  Spot   Spot?          @relation(fields: [spotId], references: [id])
+  spotId String?
+  User   User?          @relation(fields: [userId], references: [id])
+  userId String?
+  likes  CommentLikes[]
+}
+
+model CommentLikes {
+  id String @id @default(cuid())
+
+  Comment   Comment? @relation(fields: [commentId], references: [id])
+  commentId String?
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
