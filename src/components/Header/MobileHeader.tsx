@@ -10,7 +10,7 @@ export const MobileHeader = () => {
           <MdMenu size={28} onClick={() => setToggleMenu(true)} />
         </div>
         <div>
-          <p className="text-2xl">Recur</p>
+          <h1 className="text-2xl font-bold">Recur</h1>
         </div>
         <div>
           <MdAccountCircle size={36} />
