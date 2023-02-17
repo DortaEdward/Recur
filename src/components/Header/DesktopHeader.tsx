@@ -11,8 +11,8 @@ export const DesktopHeader = () => {
         <div>
           {user ? (
             <div className="flex items-center gap-1">
-              <MdAccountCircle size={28} />
-              <div className="bg-blue-200 px-6">
+              <MdAccountCircle size={36} />
+              <div className="bg-blue-200 px-6 rounded-md cursor-pointer" onClick={() => console.log('Working')}>
                 <p className="py-2">Upload</p>
               </div>
             </div>

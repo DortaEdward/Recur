@@ -10,7 +10,7 @@ export const MobileHeader = () => {
         <p className="text-2xl">Recur</p>
       </div>
       <div>
-        <MdAccountCircle size={28} />
+        <MdAccountCircle size={36} />
       </div>
     </div>
   );
